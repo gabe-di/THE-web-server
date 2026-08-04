@@ -1,6 +1,7 @@
+import "dotenv/config";
 import express from "express";
-import pagesRouter from "./routes/pages.js";
-import apiRouter from "./routes/api.js";
+import playerRoutes from "./routes/playerRoutes.js";
+import { connectDatabase } from "./config/database.js";
 
 const app = express();
 const PORT = 3000;
@@ -36,16 +37,17 @@ app.use((req, res) => {
   res.status(404).send("Page not found.");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});// work in progress
-// step one
-// step two
-// step three
-// checkpoint 1
-// checkpoint 2
-// checkpoint 3
-// BUG: off-by-one introduced here
-// checkpoint 4
-// checkpoint 5
-// stable checkpoint
+async function startServer() {
+  try {
+    await connectDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Unable to start server:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();// hotfix: correct the startup log message
